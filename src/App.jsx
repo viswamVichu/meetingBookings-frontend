@@ -5,8 +5,8 @@ import MeetingBooking from "./MeetingBooking";
 import BookingList from "./BookingList";
 import CalendarList from "./CalendarList";
 import UserAccess from "./UserAccess";
-import ApproverPanel from "./approverPanel";
-import RoomAvailablity from "./RoomAvailablity"; // <-- import your new component
+import ApproverPanel from "./ApproverPanel";
+import RoomAvailablity from "./RoomAvailablity";
 
 function App() {
   return (
