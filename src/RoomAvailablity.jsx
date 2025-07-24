@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const RoomAvailablity = () => {
+const RoomAvailability = () => {
   const [room, setRoom] = useState("");
   const [date, setDate] = useState("");
   const [slots, setSlots] = useState([]);
@@ -16,7 +16,7 @@ const RoomAvailablity = () => {
       const res = await axios.get(`${API_URL}/api/bookings`, {
         params: { MeetingRoom: room, date },
       });
-      setSlots(res.data); // Adjust if your backend returns differently
+      setSlots(res.data);
     } catch {
       setSlots([]);
       alert("Error fetching availability");
@@ -24,70 +24,98 @@ const RoomAvailablity = () => {
     setLoading(false);
   };
 
-  // Helper to check if the room is fully free
   const isRoomFree = slots.length === 0;
 
   return (
-    <div className="p-8 min-h-[calc(100vh-80px)] bg-white flex flex-col items-center m-[100px]">
-      <h2 className="text-xl font-bold mb-4">Room Availability</h2>
-      <form
-        onSubmit={checkAvailability}
-        className="mb-4 flex gap-4 flex-wrap justify-center"
-      >
-        <select value={room} onChange={(e) => setRoom(e.target.value)} required>
-          <option value="">Select Room</option>
-          <option value="IGNOU">IGNOU</option>
-          <option value="COMMITTEE">COMMITTEE</option>
-          <option value="AUDITORIUM">AUDITORIUM</option>
-        </select>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          className="bg-green-700 text-white px-4 py-2 rounded"
+    <section className="pt-[120px] px-4 sm:px-8 min-h-screen bg-[#114232] font-poppins">
+      <div className="bg-white p-6 rounded shadow text-gray-800">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Room Availability
+        </h2>
+
+        {/* Form */}
+        <form
+          onSubmit={checkAvailability}
+          className="flex flex-wrap gap-4 justify-center mb-6"
         >
-          {loading ? "Checking..." : "Check"}
-        </button>
-      </form>
-      <div className="w-full max-w-md">
-        {!loading &&
-          room &&
-          date &&
-          (isRoomFree ? (
-            <div className="text-green-700 font-semibold text-center border border-green-300 rounded p-4 bg-green-50">
-              ✅ Room is fully available for {room} on {date}
-            </div>
-          ) : (
-            <div>
-              <div className="text-red-700 font-semibold text-center mb-2">
-                ❌ Room is{" "}
-                <span className="underline">not fully available</span> for{" "}
-                {room} on {date}
+          <select
+            value={room}
+            onChange={(e) => setRoom(e.target.value)}
+            required
+            className="px-4 py-2 border border-gray-300 rounded min-w-[150px]"
+          >
+            <option value="">Select Room</option>
+            <option value="IGNOU">IGNOU</option>
+            <option value="COMMITTEE">COMMITTEE</option>
+            <option value="AUDITORIUM">AUDITORIUM</option>
+          </select>
+
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+            className="px-4 py-2 border border-gray-300 rounded"
+          />
+
+          <button
+            type="submit"
+            className="bg-green-700 text-white px-6 py-2 rounded hover:bg-green-800"
+          >
+            {loading ? "Checking..." : "Check"}
+          </button>
+        </form>
+
+        {/* Result */}
+        {!loading && room && date && (
+          <div>
+            {isRoomFree ? (
+              <div className="text-center text-green-700 font-semibold bg-green-50 border border-green-300 rounded p-4">
+                ✅ Room <span className="underline">{room}</span> is fully
+                available on {date}
               </div>
-              <div className="text-gray-700 text-center mb-2">
-                Booked slots:
+            ) : (
+              <div>
+                <div className="text-center text-red-700 font-semibold bg-red-50 border border-red-300 rounded p-4 mb-4">
+                  ❌ Room <span className="underline">{room}</span> is booked
+                  during the following times on {date}
+                </div>
+
+                {/* Table View */}
+                <table className="w-full table-auto border-collapse text-sm bg-white rounded shadow">
+                  <thead>
+                    <tr className="bg-[#FFDE21] text-black">
+                      <th className="border px-4 py-2">Start Time</th>
+                      <th className="border px-4 py-2">End Time</th>
+                      <th className="border px-4 py-2">Booking Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {slots.map((slot, idx) => (
+                      <tr
+                        key={idx}
+                        className="bg-gray-50 hover:bg-gray-100 transition"
+                      >
+                        <td className="border px-4 py-2">
+                          {new Date(slot.StartTime).toLocaleTimeString()}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {new Date(slot.EndTime).toLocaleTimeString()}
+                        </td>
+                        <td className="border px-4 py-2">
+                          {slot.BookingName || "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <ul className="max-h-64 overflow-y-auto border rounded p-2 bg-gray-50">
-                {slots.map((slot, idx) => (
-                  <li key={idx} className="mb-1">
-                    {slot.StartTime} - {slot.EndTime}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        {loading && (
-          <div className="text-center text-gray-500">
-            Checking availability...
+            )}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 
-export default RoomAvailablity;
+export default RoomAvailability;

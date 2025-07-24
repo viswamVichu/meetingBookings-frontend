@@ -11,8 +11,12 @@ const LogoutButton = () => {
 
   return (
     <button
-      onClick={handleLogout}
-      className="bg-red-600 text-white px-4 py-2 rounded ml-4"
+      onClick={() => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("role");
+        navigate("/login"); // 👈 send to login page
+      }}
+      className="bg-red-500 text-white px-4 py-2 rounded"
     >
       Logout
     </button>

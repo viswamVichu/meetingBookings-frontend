@@ -1,18 +1,32 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Navigation from "./Navigation";
 import Home from "./Home";
 import MeetingBooking from "./MeetingBooking";
 import BookingList from "./BookingList";
 import CalendarList from "./CalendarList";
+import MeetingCancel from "./MeetingCancel";
 import UserAccess from "./UserAccess";
-import ApproverPanel from "./ApproverPanel";
+import ApproverPanel from "./approverPanel";
 import RoomAvailablity from "./RoomAvailablity";
+import Login from "./Login"; // 👈 Login page
+import Register from "./Register"; // 👈 Register page
 
-function App() {
+function AppRoutes() {
+  const location = useLocation();
+  const hideNavOnPaths = ["/login", "/register"];
+  const shouldHideNav = hideNavOnPaths.includes(location.pathname);
+
   return (
-    <Router>
-      <Navigation />
+    <>
+      {!shouldHideNav && <Navigation />}
       <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/meeting-booking" element={<MeetingBooking />} />
         <Route path="/booking-list" element={<BookingList />} />
@@ -24,11 +38,16 @@ function App() {
           element={<UserAccess role="approver" />}
         />
         <Route path="/approver-panel" element={<ApproverPanel />} />
-        <Route path="/room-availablity" element={<RoomAvailablity />} />{" "}
-        {/* Add this line */}
+        <Route path="/room-availablity" element={<RoomAvailablity />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <AppRoutes />
+    </Router>
+  );
+}

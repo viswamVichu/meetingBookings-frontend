@@ -8,8 +8,8 @@ const Navigation = () => {
     localStorage.getItem("isLoggedIn") === "true"
   );
   const [role, setRole] = useState(localStorage.getItem("role") || "");
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Update isLoggedIn and role state when localStorage changes (login/logout)
   useEffect(() => {
     const checkLogin = () => {
       setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
@@ -24,50 +24,63 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="flex items-center justify-between p-4 bg-green-950 text-white fixed w-full top-0 z-50">
+    <nav className="flex items-center justify-between bg-[#f7f7f7] p-4 text-white fixed w-full top-0 z-50 font-poppins text-lg">
       <div className="flex items-center">
         <img src={logo} alt="Logo" className="h-20 w-auto rounded-full" />
       </div>
 
-      <div className="flex gap-4 items-center">
-        <NavLink
-          to="/home"
-          className={({ isActive }) =>
-            isActive
-              ? "bg-black text-white p-2 rounded-md"
-              : "bg-[#ccff00fd] p-2 text-black rounded-md"
-          }
-        >
-          Login
-        </NavLink>
-
-        {/* Show Meeting Booking and Booking List only for user */}
+      <div className="flex gap-4 items-center relative">
         {isLoggedIn && role === "user" && (
           <>
             <NavLink
-              to="/meeting-booking"
+              to="/home"
               className={({ isActive }) =>
                 isActive
                   ? "bg-black text-white p-2 rounded-md"
-                  : "bg-[#CCFF00] p-2 text-black rounded-md"
+                  : "bg-[#578E7E] p-2 text-black rounded-md"
               }
             >
-              Meeting Booking
+              Home
             </NavLink>
-            <NavLink
-              to="/booking-list"
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-black text-white p-2 rounded-md"
-                  : "bg-[#CCFF00] p-2 text-black rounded-md"
-              }
-            >
-              Booking List
-            </NavLink>
+
+            {/* Click-based dropdown */}
+            <div className="relative">
+              <button
+                className="bg-[#578E7E] p-2 text-black rounded-md"
+                onClick={() => setShowDropdown((prev) => !prev)}
+              >
+                Meeting Hall Reservation
+              </button>
+              {showDropdown && (
+                <div className="absolute bg-white text-black rounded shadow-md mt-2 min-w-[220px] z-10">
+                  <NavLink
+                    to="/meeting-booking"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Meeting Room
+                  </NavLink>
+                  <NavLink
+                    to="/booking-list"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Booking List
+                  </NavLink>
+                  <NavLink
+                    to="/calendar-list"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Calendar List
+                  </NavLink>
+                </div>
+              )}
+            </div>
           </>
         )}
 
-        {/* Show Approver Panel and Room Availability only for approver */}
+        {/* Approver-only links */}
         {isLoggedIn && role === "approver" && (
           <>
             <NavLink
@@ -75,7 +88,7 @@ const Navigation = () => {
               className={({ isActive }) =>
                 isActive
                   ? "bg-black text-white p-2 rounded-md"
-                  : "bg-[#CCFF00] p-2 text-black rounded-md"
+                  : "bg-[#578E7E] p-2 text-black rounded-md"
               }
             >
               Approver Panel
@@ -85,7 +98,7 @@ const Navigation = () => {
               className={({ isActive }) =>
                 isActive
                   ? "bg-black text-white p-2 rounded-md"
-                  : "bg-[#CCFF00] p-2 text-black rounded-md"
+                  : "bg-[#578E7E] p-2 text-black rounded-md"
               }
             >
               Room Availability
@@ -93,30 +106,18 @@ const Navigation = () => {
           </>
         )}
 
-        {/* Show Calendar List and User Access for all logged in users */}
+        {/* Common to all logged in users */}
         {isLoggedIn && (
-          <>
-            <NavLink
-              to="/calendar-list"
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-black text-white p-2 rounded-md"
-                  : "bg-[#CCFF00] p-2 text-black rounded-md"
-              }
-            >
-              Calendar List
-            </NavLink>
-            <NavLink
-              to="/user-access"
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-black text-white p-2 rounded-md"
-                  : "bg-[#CCFF00] p-2 text-black rounded-md"
-              }
-            >
-              User Access
-            </NavLink>
-          </>
+          <NavLink
+            to="/user-access"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-black text-white p-2 rounded-md"
+                : "bg-[#578E7E] p-2 text-black rounded-md"
+            }
+          >
+            User Access
+          </NavLink>
         )}
 
         {isLoggedIn && <LogoutButton />}

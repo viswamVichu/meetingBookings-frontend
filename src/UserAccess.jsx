@@ -37,7 +37,10 @@ const UserAccess = ({ role }) => {
   }
 
   return (
-    <div style={{ marginTop: "120px", color: "black", textAlign: "center" }}>
+    <div
+      className="bg-[#114232] h-screen w-full "
+      style={{ marginTop: "120px", color: "white", textAlign: "center" }}
+    >
       {content}
     </div>
   );
