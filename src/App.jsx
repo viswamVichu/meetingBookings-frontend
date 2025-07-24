@@ -9,9 +9,9 @@ import Home from "./Home";
 import MeetingBooking from "./MeetingBooking";
 import BookingList from "./BookingList";
 import CalendarList from "./CalendarList";
-import MeetingCancel from "./MeetingCancel";
+
 import UserAccess from "./UserAccess";
-import ApproverPanel from "./approverPanel";
+import ApproverPanel from "./ApproverPanel";
 import RoomAvailablity from "./RoomAvailablity";
 import Login from "./Login"; // 👈 Login page
 import Register from "./Register"; // 👈 Register page
