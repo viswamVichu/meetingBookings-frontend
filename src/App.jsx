@@ -16,6 +16,7 @@ import ApproverPanel from "./ApproverPanel";
 import RoomAvailablity from "./RoomAvailablity";
 import Login from "./Login";
 import Register from "./Register";
+import UserApproverPanel from "./UserApproverPanel";
 
 function AppRoutes() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function AppRoutes() {
       <Routes>
         {/* 🔁 Default route redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* <Route path="/user-approver-panel" element={<UserApproverPanel />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
