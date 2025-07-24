@@ -2,19 +2,20 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   useLocation,
 } from "react-router-dom";
+
 import Navigation from "./Navigation";
 import Home from "./Home";
 import MeetingBooking from "./MeetingBooking";
 import BookingList from "./BookingList";
 import CalendarList from "./CalendarList";
-
 import UserAccess from "./UserAccess";
 import ApproverPanel from "./ApproverPanel";
 import RoomAvailablity from "./RoomAvailablity";
-import Login from "./Login"; // 👈 Login page
-import Register from "./Register"; // 👈 Register page
+import Login from "./Login";
+import Register from "./Register";
 
 function AppRoutes() {
   const location = useLocation();
@@ -25,8 +26,8 @@ function AppRoutes() {
     <>
       {!shouldHideNav && <Navigation />}
       <Routes>
+        {/* 🔁 Default route redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
