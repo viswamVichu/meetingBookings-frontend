@@ -25,6 +25,8 @@ function AppRoutes() {
     <>
       {!shouldHideNav && <Navigation />}
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
