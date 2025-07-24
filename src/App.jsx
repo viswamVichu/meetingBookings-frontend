@@ -16,7 +16,6 @@ import ApproverPanel from "./ApproverPanel";
 import RoomAvailablity from "./RoomAvailablity";
 import Login from "./Login";
 import Register from "./Register";
-import UserApproverPanel from "./UserApproverPanel";
 
 function AppRoutes() {
   const location = useLocation();
