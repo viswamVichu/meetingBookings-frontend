@@ -34,7 +34,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Login failed. Please try again.");
+      setError("Login failed. Please try againnnn.");
     }
   };
 
