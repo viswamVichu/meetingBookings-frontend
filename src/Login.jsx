@@ -12,38 +12,49 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous error
 
     try {
-      const res = await axios.post(`${API_URL}/api/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(`${API_URL}/api/login`, { email, password });
 
-      if (res.data?.success) {
+      const { success, role, status, message } = res.data;
+
+      if (success) {
         localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("role", res.data.role);
-        alert("Login successful!");
+        localStorage.setItem("role", role);
+        localStorage.setItem("status", status);
 
-        if (res.data.role === "approver") {
+        // ✅ Block only non-approvers with pending status
+        if (res.data.status !== "approved" && res.data.role !== "approver") {
+          setError("Your account is pending approval. Please wait.");
+          return;
+        }
+
+        alert("Login successful!");
+        console.log("Login response:", res.data);
+
+        if (role === "approver") {
           navigate("/approver-panel");
         } else {
           navigate("/home");
         }
       } else {
-        setError("Invalid email or password");
+        setError(message || "Invalid email or password");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Login failed. Please try againnnn.");
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     }
   };
 
   return (
-    <section className="pt-[120px] w-full min-h-screen bg-white ">
+    <section className="pt-[120px] w-full min-h-screen bg-white">
       <div className="flex items-center justify-center h-full mt-[200px]">
         <form
           onSubmit={handleLogin}
-          className=" bg-[#004030] text-white  rounded-lg p-8  shadow-md min-w-[350px]"
+          className="bg-[#004030] text-white rounded-lg p-8 shadow-md min-w-[350px]"
         >
           <h2 className="mb-4 font-bold text-xl text-center">Login</h2>
           {error && (
