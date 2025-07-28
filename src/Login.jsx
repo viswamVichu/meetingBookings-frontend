@@ -24,11 +24,11 @@ const Login = () => {
         localStorage.setItem("role", role);
         localStorage.setItem("status", status);
 
-        // ✅ Block only non-approvers with pending status
-        if (res.data.status !== "approved" && res.data.role !== "approver") {
-          setError("Your account is pending approval. Please wait.");
-          return;
-        }
+        // // ✅ Block only non-approvers with pending status
+        // if (res.data.status !== "approved" && res.data.role !== "approver") {
+        //   setError("Your account is pending approval. Please wait.");
+        //   return;
+        // }
 
         alert("Login successful!");
         console.log("Login response:", res.data);
