@@ -15,7 +15,7 @@ const UserApproverPanel = () => {
   };
 
   useEffect(() => {
-    fetchPendingUsers();
+    fetchPendingUsers();  
   }, []);
 
   const handleApprove = async (id) => {
@@ -82,3 +82,4 @@ const UserApproverPanel = () => {
 };
 
 export default UserApproverPanel;
+

@@ -26,11 +26,12 @@ const Navigation = () => {
   return (
     <nav className="flex items-center justify-between bg-[#f7f7f7] p-4 text-white fixed w-full top-0 z-50 font-poppins text-lg">
       <div className="flex items-center">
-        <img src={logo} alt="Logo" className="h-20 w-auto rounded-full" />
+        <img src={logo} alt="Logo" className="h-[110px] w-auto rounded-full" />
       </div>
 
       <div className="flex gap-4 items-center relative">
-        {isLoggedIn && role === "user" && (
+        {/* 🔓 Home & Meeting Reservation for both user + approver */}
+        {isLoggedIn && ["user", "approver"].includes(role) && (
           <>
             <NavLink
               to="/home"
@@ -43,7 +44,7 @@ const Navigation = () => {
               Home
             </NavLink>
 
-            {/* Click-based dropdown */}
+            {/* Dropdown Menu */}
             <div className="relative">
               <button
                 className="bg-[#578E7E] p-2 text-black rounded-md"
@@ -58,7 +59,7 @@ const Navigation = () => {
                     className="block px-4 py-2 hover:bg-gray-100"
                     onClick={() => setShowDropdown(false)}
                   >
-                    Meeting Room
+                    Booking room
                   </NavLink>
                   <NavLink
                     to="/booking-list"
@@ -74,13 +75,20 @@ const Navigation = () => {
                   >
                     Calendar List
                   </NavLink>
+                  <NavLink
+                    to="/cancelled-bookings"
+                    className="block px-4 py-2 hover:bg-gray-100 text-red-600"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Cancelled Bookings 🗑️
+                  </NavLink>
                 </div>
               )}
             </div>
           </>
         )}
 
-        {/* Approver-only links */}
+        {/* 🔐 Approver-only Links */}
         {isLoggedIn && role === "approver" && (
           <>
             <NavLink
@@ -106,7 +114,7 @@ const Navigation = () => {
           </>
         )}
 
-        {/* Common to all logged in users */}
+        {/* 👥 Common for all users */}
         {isLoggedIn && (
           <NavLink
             to="/user-access"

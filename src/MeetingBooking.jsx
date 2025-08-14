@@ -8,6 +8,7 @@ const MeetingBooking = () => {
   const [formData, setFormData] = useState({
     BookingName: "",
     ProjectName: "",
+    ProgramName: "", // ✨ New Field
     ProgramTitle: "",
     Participants: "",
     EventInCharge: "",
@@ -47,10 +48,11 @@ const MeetingBooking = () => {
     const payload = {
       BookingName: formData.BookingName,
       ProjectName: formData.ProjectName,
+      ProgramName: formData.ProgramName, // 🔗 Included in Payload
       ProgramTitle: formData.ProgramTitle,
       Participants: Number(formData.Participants),
       EventInCharge: formData.EventInCharge,
-      InChargeEmail: formData.InChargeEmail,
+      InChargeEmail: localStorage.getItem("userEmail"),
       ApproverEmail: formData.ApproverEmail,
       StartTime: new Date(formData.StartTime).toISOString(),
       EndTime: new Date(formData.EndTime).toISOString(),
@@ -88,103 +90,93 @@ const MeetingBooking = () => {
   };
 
   return (
-    <>
-      <section className="min-h-screen w-full bg-[#114232] flex items-center justify-center px-4 sm:px-10 py-10 mt-[50px] font-poppins ">
-        <div className="2xl:container mx-auto max-w-3xl p-8 rounded text-[14px]">
-          <form
-            className="grid grid-cols-1 gap-4 py-10 ml-[200px] text-sm"
-            onSubmit={handleSubmit}
-          >
-            {/* Text and number fields */}
-            {[
-              { label: "Booking Name", name: "BookingName", type: "text" },
-              { label: "Project Name", name: "ProjectName", type: "text" },
+    <section className="min-h-screen w-full bg-[#114232] flex items-center justify-center px-4 sm:px-10 py-10 mt-[50px] font-poppins">
+      <div className="2xl:container mx-auto max-w-3xl p-8 rounded text-[14px]">
+        <form
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 py-10 px-6 rounded-lg shadow-xl text-sm"
+          onSubmit={handleSubmit}
+        >
+          {[
+            { label: "Booking Name", name: "BookingName", type: "text" },
+            { label: "Project Name", name: "ProjectName", type: "text" },
+            { label: "Program Name", name: "ProgramName", type: "text" }, // ✨ New Input
+            {
+              label: "Programme Area",
+              name: "ProgramTitle",
+              type: "select",
+              options: [
+                "Information Technology",
+                "Administration",
+                "Accounts",
+                "Coastal System Research",
+                "ANH",
+                "Biodiversity",
+                "BioTechnology",
+                "Eco Technology",
+                "Climate Control",
+                "HMRC",
+              ],
+            },
+            {
+              label: "Meeting Room",
+              name: "MeetingRoom",
+              type: "select",
+              options: ["IGNOU", "COMMITTEE", "AUDITORIUM"],
+            },
+            {
+              label: "No of Participants",
+              name: "Participants",
+              type: "number",
+            },
+            { label: "Event In Charge", name: "EventInCharge", type: "text" },
 
-              // ✅ Program Title moved to 3rd
-              {
-                label: "Programme Title",
-                name: "ProgramTitle",
-                type: "select",
-                options: [
-                  "Information Technology",
-                  "Administration",
-                  "Accounts",
-                  "Coastal System Research",
-                  "ANH",
-                  "Biodiversity",
-                  "BioTechnology",
-                  "Eco Technology",
-                  "Climate Control",
-                  "HMRC",
-                ],
-              },
+            { label: "Approver Email", name: "ApproverEmail", type: "email" },
+            { label: "Start Time", name: "StartTime", type: "datetime-local" },
+            { label: "End Time", name: "EndTime", type: "datetime-local" },
+            { label: "In Charge Email", name: "InChargeEmail", type: "email" },
+          ].map(({ label, name, type, options }) => (
+            <div key={name} className="flex items-center gap-4">
+              <label className="w-48 text-white font-medium">{label}:</label>
+              {type === "select" ? (
+                <select
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  className="w-[50%] py-2 px-4 border border-gray-300 rounded"
+                  required
+                >
+                  <option value="">-- Select --</option>
+                  {options.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={type}
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  placeholder={label}
+                  className="w-[50%] py-2 px-4 border border-gray-300 rounded"
+                  required
+                />
+              )}
+            </div>
+          ))}
 
-              // ✅ Meeting Room moved to 4th
-              {
-                label: "Meeting Room",
-                name: "MeetingRoom",
-                type: "select",
-                options: ["IGNOU", "COMMITTEE", "AUDITORIUM"],
-              },
-
-              {
-                label: "No of Participants",
-                name: "Participants",
-                type: "number",
-              },
-              { label: "Event In Charge", name: "EventInCharge", type: "text" },
-              {
-                label: "In Charge Email",
-                name: "InChargeEmail",
-                type: "email",
-              },
-              { label: "Approver Email", name: "ApproverEmail", type: "email" },
-              {
-                label: "Start Time",
-                name: "StartTime",
-                type: "datetime-local",
-              },
-              { label: "End Time", name: "EndTime", type: "datetime-local" },
-            ].map(({ label, name, type, options }) => (
-              <div key={name} className="flex items-center gap-4">
-                <label className="w-48 text-white font-medium">{label}:</label>
-                {type === "select" ? (
-                  <select
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    className="w-[50%] py-2 px-4 border border-gray-300 rounded"
-                    required
-                  >
-                    <option value="">-- Select --</option>
-                    {options.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type={type}
-                    name={name}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    placeholder={label}
-                    className="w-[50%] py-2 px-4 border border-gray-300 rounded"
-                    required
-                  />
-                )}
-              </div>
-            ))}
-
-            {/* Boolean fields as dropdowns */}
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-white font-medium">
-                Audio Visual Needed:
-              </label>
+          {/* Boolean fields */}
+          {[
+            { label: "Audio Visual Needed", name: "AudioVisual" },
+            { label: "Video Conference Needed", name: "VideoConf" },
+            { label: "Catering Required", name: "Catering" },
+          ].map(({ label, name }) => (
+            <div key={name} className="flex items-center gap-4">
+              <label className="w-48 text-white font-medium">{label}:</label>
               <select
-                name="AudioVisual"
-                value={formData.AudioVisual}
+                name={name}
+                value={formData[name]}
                 onChange={handleChange}
                 className="w-[50%] py-2 px-4 border border-gray-300 rounded"
                 required
@@ -194,52 +186,20 @@ const MeetingBooking = () => {
                 <option value="false">No</option>
               </select>
             </div>
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-white font-medium">
-                Video Conference Needed:
-              </label>
-              <select
-                name="VideoConf"
-                value={formData.VideoConf}
-                onChange={handleChange}
-                className="w-[50%] py-2 px-4 border border-gray-300 rounded"
-                required
-              >
-                <option value="">-- Select --</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-4">
-              <label className="w-48 text-white font-medium">
-                Catering Required:
-              </label>
-              <select
-                name="Catering"
-                value={formData.Catering}
-                onChange={handleChange}
-                className="w-[50%] py-2 px-4 border border-gray-300 rounded"
-                required
-              >
-                <option value="">-- Select --</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </select>
-            </div>
+          ))}
 
-            <div className="ml-[35%] gap-4 py-3">
-              <button
-                className="bg-[#FFDE21] text-black font-bold py-3 px-2 rounded-lg"
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Booking..." : "Booking a meeting room"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-    </>
+          <div className="ml-[35%] gap-4 py-3">
+            <button
+              className="bg-[#FFDE21] text-black font-bold py-3 px-2 rounded-lg"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Booking..." : "Booking a meeting room"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 };
 

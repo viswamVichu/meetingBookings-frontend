@@ -16,6 +16,10 @@ import ApproverPanel from "./ApproverPanel";
 import RoomAvailablity from "./RoomAvailablity";
 import Login from "./Login";
 import Register from "./Register";
+import MeetingCancel from "./MeetingCancel";
+
+// ✅ Role utility
+const getRole = () => localStorage.getItem("role");
 
 function AppRoutes() {
   const location = useLocation();
@@ -28,21 +32,46 @@ function AppRoutes() {
       <Routes>
         {/* 🔁 Default route redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        {/* <Route path="/user-approver-panel" element={<UserApproverPanel />} /> */}
+
+        {/* 🔓 Public routes */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/meeting-booking" element={<MeetingBooking />} />
+
+        {/* 🔐 Only Approvers can access Home + Meeting Booking */}
+        <Route
+          path="/home"
+          element={
+            ["approver", "user"].includes(getRole()) ? (
+              <Home />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/meeting-booking"
+          element={
+            ["approver", "user"].includes(getRole()) ? (
+              <MeetingBooking />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        {/* 🧾 Shared/role-based pages */}
         <Route path="/booking-list" element={<BookingList />} />
         <Route path="/calendar-list" element={<CalendarList />} />
+        <Route path="/room-availablity" element={<RoomAvailablity />} />
+        <Route path="/approver-panel" element={<ApproverPanel />} />
         <Route path="/user-access" element={<UserAccess role="admin" />} />
         <Route path="/user-access-user" element={<UserAccess role="user" />} />
+        <Route path="/cancelled-bookings" element={<MeetingCancel />} />
+
         <Route
           path="/user-access-approver"
           element={<UserAccess role="approver" />}
         />
-        <Route path="/approver-panel" element={<ApproverPanel />} />
-        <Route path="/room-availablity" element={<RoomAvailablity />} />
       </Routes>
     </>
   );

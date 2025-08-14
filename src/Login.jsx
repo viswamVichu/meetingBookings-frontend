@@ -12,39 +12,44 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous error
-
+    setError("");
     try {
       const res = await axios.post(`${API_URL}/api/login`, { email, password });
-
       const { success, role, status, message } = res.data;
 
-      if (success) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("role", role);
-        localStorage.setItem("status", status);
+      if (!success) {
+        return setError(message || "Invalid email or password");
+      }
 
-        // // ✅ Block only non-approvers with pending status
-        // if (res.data.status !== "approved" && res.data.role !== "approver") {
-        //   setError("Your account is pending approval. Please wait.");
-        //   return;
-        // }
+      // ⛔ Block access for pending users
+      // if (status !== "approved") {
+      //   return setError(
+      //     "Your account is pending approval. Please wait for admin action."
+      //   );
+      // }
 
-        alert("Login successful!");
-        console.log("Login response:", res.data);
+      // 💾 Store session details
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("role", role);
+      localStorage.setItem("status", status);
 
-        if (role === "approver") {
-          navigate("/approver-panel");
-        } else {
-          navigate("/home");
-        }
+      alert("Login successful!");
+      console.log("✅ Login response:", res.data);
+
+      // 🌐 Route based on role
+
+      if (role === "approver") {
+        navigate("/approver-panel");
+      } else if (role === "user") {
+        navigate("/home"); // ✅ this matches your routing access
       } else {
-        setError(message || "Invalid email or password");
+        navigate("/user-access"); // fallback for unexpected role
       }
     } catch (err) {
       console.error("Login error:", err);
       setError(
-        err.response?.data?.message || "Login failed. Please try again."
+        err.response?.data?.message || "Login failed. Please try again later."
       );
     }
   };
@@ -57,9 +62,13 @@ const Login = () => {
           className="bg-[#004030] text-white rounded-lg p-8 shadow-md min-w-[350px]"
         >
           <h2 className="mb-4 font-bold text-xl text-center">Login</h2>
+
           {error && (
-            <div className="mb-2 text-red-600 text-center">{error}</div>
+            <div className="mb-2 text-red-500 bg-white px-2 py-1 text-center rounded">
+              {error}
+            </div>
           )}
+
           <input
             type="email"
             placeholder="Email"
@@ -76,12 +85,14 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
           <button
-            className="bg-[#06923E] text-white px-4 py-2 rounded w-full"
+            className="bg-[#06923E] text-white px-4 py-2 rounded w-full hover:bg-[#057a33]"
             type="submit"
           >
             Login
           </button>
+
           <p className="mt-4 text-center text-sm">
             Don’t have an account?{" "}
             <span

@@ -7,18 +7,29 @@ const ROOMS = ["IGNOU", "COMMITTEE", "AUDITORIUM"];
 
 const BookingList = () => {
   const navigate = useNavigate();
+
+  const [selectedRoom, setSelectedRoom] = useState("ALL");
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ Added loading state
+
+  // ✅ Redirect if not logged in
   useEffect(() => {
     if (localStorage.getItem("isLoggedIn") !== "true") {
       navigate("/login");
     }
   }, [navigate]);
 
-  const [selectedRoom, setSelectedRoom] = useState("ALL");
-  const [bookings, setBookings] = useState([]);
-
+  // ✅ Fetch bookings on mount
   useEffect(() => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      console.warn("No userEmail found in localStorage!");
+      setLoading(false);
+      return;
+    }
+
     axios
-      .get(`${API_URL}/api/bookings`)
+      .get(`${API_URL}/api/bookings?email=${userEmail}`)
       .then((res) => {
         const filtered = res.data.filter(
           (b) =>
@@ -27,9 +38,13 @@ const BookingList = () => {
         );
         setBookings(filtered);
       })
-      .catch((err) => console.error("Error fetching bookings:", err));
+      .catch((err) => {
+        console.error("Error fetching bookings:", err);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
+  // ✅ Handle cancel request
   const handleCancelRequest = async (booking) => {
     const { id, BookingName } = booking;
 
@@ -40,7 +55,6 @@ const BookingList = () => {
 
       alert(`Booking '${BookingName}' cancelled successfully!`);
 
-      // ✅ Remove the cancelled booking from state
       setBookings((prev) =>
         prev.filter((b) => b.id !== id && b.Status !== "cancelled")
       );
@@ -50,6 +64,7 @@ const BookingList = () => {
     }
   };
 
+  // ✅ Filter bookings by selected room
   const filteredBookings =
     selectedRoom === "ALL"
       ? bookings
@@ -59,10 +74,10 @@ const BookingList = () => {
     <section className="min-h-screen w-full bg-[#114232] pt-[120px] px-4 sm:px-8 font-poppins">
       <div className="w-full bg-white p-6 rounded shadow-md text-[1.7rem]">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Booking List
+          My Booking List
         </h2>
 
-        {/* Room Selector */}
+        {/* ✅ Room Selector */}
         <div className="flex items-center gap-4 mb-6">
           <label className="w-48 text-gray-700 font-medium">
             Meeting Room:
@@ -81,8 +96,10 @@ const BookingList = () => {
           </select>
         </div>
 
-        {/* Booking Table */}
-        {filteredBookings.length > 0 ? (
+        {/* ✅ Booking Table or Fallback */}
+        {loading ? (
+          <p className="text-center text-gray-600">Loading bookings...</p>
+        ) : filteredBookings.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full table-auto border-collapse text-sm">
               <thead>
@@ -98,6 +115,7 @@ const BookingList = () => {
                   <th className="border px-4 py-2">AV</th>
                   <th className="border px-4 py-2">VC</th>
                   <th className="border px-4 py-2">Catering</th>
+                  <th className="border px-4 py-2">Status</th>
                   <th className="border px-4 py-2">Action</th>
                 </tr>
               </thead>
@@ -134,10 +152,22 @@ const BookingList = () => {
                       {b.Catering ? "Yes" : "No"}
                     </td>
                     <td className="border px-4 py-2">
+                      <span
+                        className={`font-semibold ${
+                          b.Status?.toLowerCase() === "approved"
+                            ? "text-green-600"
+                            : b.Status?.toLowerCase() === "pending"
+                            ? "text-yellow-500"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {b.Status || "Unknown"}
+                      </span>
+                    </td>
+                    <td className="border px-4 py-2">
                       <button
                         className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
                         onClick={() => handleCancelRequest(b)}
-                        // ✅ Fixed ID reference
                       >
                         Cancel
                       </button>

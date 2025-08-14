@@ -21,6 +21,10 @@ const ApproverPanel = () => {
   const handleApprove = async (id) => {
     setLoading(true);
     await axios.post(`${API_URL}/api/bookings/${id}/approve`);
+
+    // 🔥 Trigger refresh flag
+    localStorage.setItem("refreshCalendar", "true");
+
     fetchPending();
     setLoading(false);
     alert("Booking approved and mail sent!");
